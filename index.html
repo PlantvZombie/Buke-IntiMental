@@ -5,6 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="">
         <title>Buke IntiMental</title>
+        <style>
+            .wordBox{
+                width: 325px;
+                height: 450px;
+                background-color: rgb(245, 235, 193);
+                border: 2px solid #974d10;
+                padding: 20px;
+                margin: 20px;
+                box-sizing: border-box;
+            }
+        </style>
     </head>
 
     <body>
@@ -13,6 +24,14 @@
         <img id="bukeImg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA1do1MbjNDt2mWwNhLQTTgSw6RqREWtjzPDxXMc7Ilb0OsrU_aZNwtjk&s=10" width="400px" height="300px" style="margin-inline: auto;"/>
 
         <p id="wordsLabel">Placeholder</p>
+        <div class="wordBox" style="position: absolute; top: 5%; left: 35%;">
+            <p id="wordText"></p>
+        </div>
+
+        <div style="position: absolute; top: 2%; right: 5%;">
+            Loger Bukes
+            <button id="longer">1 Knowledge!</button>
+        </div>
 
         <script src="script.js"></script>
     </body>

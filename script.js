@@ -6,13 +6,11 @@ const bukeImg = document.getElementById('bukeImg');
 
 const logerBuke = document.getElementById('longer');
 
-const thinker = new brain.recurrent.LSTM({hiddenLayers: [20]});
-
 let knowledge = 0, words = 0, maxWords = 0, startingWords = 0;
 let maxWordIncreaser = 0, logerCost = 1;
 let text = [];
 
-let startingDict = ['Once', 'There', 'The', 'A'];
+let startingDict = ['Once', 'There', 'The', 'A', 'I'];
 
 const brainTrainRaw = [
     'Once upon a time there was a big tower.',
@@ -24,30 +22,70 @@ const brainTrainRaw = [
     'The king is super strong.',
     'The long train went around town.',
     'A guy with a lady makes a couple.',
+    'My mommy and daddy pay for my lunch.',
+    'Periods go anywhere I want them to.',
+    'Little red riding hood is my favorite book.',
+    'Dear diary, hello!',
+    'I like to listen to the birds when they go chirp tweet.',
+    'I peed my pants. It hurt.',
+    'I can’t think?',
+    'One who thinks all the time has nothing to think about but thoughts.',
+    'The biggest number I know is five billion!',
+    'I can count to four.',
+    'I am but a leaf, captured in the ever-shifting crossroads of ambivalent wind,', 
+    'drifting across plains of gold and sullen, dry fields.',
+    'The quick red fox was browned by the bear.',
 ];
 
-const brainTrain = brainTrainRaw.map(sentence => sentence.split(/(\W)/).filter(Boolean));
-
-thinker.train(brainTrain, {
-    iterations: 1000,
-    errorThresh: 0.001
-});
-
-function writeText(brain, root, length)
+class MarkovGenerator
 {
-    let words = root.split(" ");
-    while (words.length < length)
-    {
-        const context = words.slice(-15);
-        const nextChunk = brain.run(context);
-        words.push(...(nextChunk.split(' ')));
-        console.log(nextChunk);
-        console.log(context);
-        console.log(words);
+    constructor(context){
+        this.context = context;
+        this.chain = {};
     }
-    return words;
+
+    train(data)
+    {
+        const brainTrain = data.join(' ').trim().split(/\s+|([^\w\s'’-])/).filter(Boolean);
+        console.log(brainTrain);
+        for (let i = 0; i < (brainTrain.length - this.context); i++)
+        {
+            const section = brainTrain.slice(i, i + this.context).join(' ');
+            const nextWord = brainTrain[i + this.context];
+            if (!this.chain[section])
+            {
+                this.chain[section] = [];
+            }
+            this.chain[section].push(nextWord);
+        }
+    }
+
+    writeText(root, length)
+    {
+        let words = root.trim().split(/\s+/);
+        while (words.length < length)
+        {
+            const context = words.slice(-this.context).join(' ');
+            const possibilities = this.chain[context];
+            if (!possibilities || possibilities.length === 0)
+            {
+                words.push(startingDict[Math.floor(Math.random() * startingDict.length)]);
+                console.log(possibilities);
+                console.log(context);
+                console.log(words);
+                continue;
+            }
+            words.push(possibilities[Math.floor(Math.random() * possibilities.length)]);
+            console.log(possibilities);
+            console.log(context);
+            console.log(words);
+        }
+        return words;
+    }
 }
 
+const thinker = new MarkovGenerator(1);
+thinker.train(brainTrainRaw);
 
 logerBuke.addEventListener('click', () => {
     if (!(knowledge < logerCost))
@@ -65,7 +103,7 @@ function reading()
     text[startingWords-words] = `<span style = "color: #b9b285ff;">${text[startingWords-words]}</span>`;
     words -= 1;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
-    bukeWords.innerHTML = `${text.join(' ')}`;
+    bukeWords.innerHTML = `${text.join(' ').replace(/\s+([.,!?'])/g, "$1")}`;
     if (words < 1) {knowledge++; knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; bukeImg.removeEventListener('click', reading); newBuke()}
 }
 
@@ -74,13 +112,13 @@ function newBuke()
     maxWords = 100 + maxWordIncreaser;
     words = Math.round(Math.random() * maxWords) + 1;
     
-    text = writeText(thinker, startingDict[Math.floor(Math.random() * startingDict.length)], words);
+    text = thinker.writeText(startingDict[Math.floor(Math.random() * startingDict.length)], words);
     words = text.length;
     startingWords = words;
 
     knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
-    bukeWords.innerHTML = `${text.join(' ')}`;
+    bukeWords.innerHTML = `${text.join(' ').replace(/\s+([.,!?'])/g, "$1")}`;
 
     bukeImg.addEventListener('click', reading);
 }

@@ -10,7 +10,7 @@ let knowledge = 0, words = 0, maxWords = 0, startingWords = 0;
 let maxWordIncreaser = 0, logerCost = 1;
 let text = [];
 
-let startingDict = ['Once', 'There', 'The', 'A', 'I'];
+let startingDict = ['Once', 'There', 'The', 'A', 'I','My', 'Everybody', 'They', 'And', 'He', 'Periods', 'Little', 'Dear', 'One', 'Sonion', 'Who', 'Man', 'It', ];
 
 const brainTrainRaw = [
     'Once upon a time there was a big tower.',
@@ -18,7 +18,7 @@ const brainTrainRaw = [
     'They did happy dances and fun parties around the tower.',
     'And then they went to bed and had nice cool dreams!',
     'There was once a big bad guy.',
-    'He tried to hurt the king but he used his daddy strength to win.',
+    'He tried to hurt the king but he used his great strength to win.',
     'The king is super strong.',
     'The long train went around town.',
     'A guy with a lady makes a couple.',
@@ -32,9 +32,22 @@ const brainTrainRaw = [
     'One who thinks all the time has nothing to think about but thoughts.',
     'The biggest number I know is five billion!',
     'I can count to four.',
-    'I am but a leaf, captured in the ever-shifting crossroads of ambivalent wind,', 
-    'drifting across plains of gold and sullen, dry fields.',
+    'I am but a leaf, captured in the ever-shifting crossroads of ambivalent wind, drifting across plains of gold and sullen, dry fields.',
     'The quick red fox was browned by the bear.',
+    'I am seven years old.',
+    'My mommy takes me into the women’s bathroom when I have to pee.',
+    'Sonion.',
+    'Once my poop was red and it scared me.',
+    'The bear had lots of hair.',
+    'Who do I pick? Man or bear?',
+    'I think my name is thinker.',
+    'My sandwich is stinky.',
+    'The cat sat on a mat.',
+    'There were too many people in my house.',
+    'There can’t be three!',
+    'The orange juice is yummy.',
+    'Dear mommy and daddy, I love you.',
+    'They asked if I was seven, but I said I am four! I am very smart.',
 ];
 
 class MarkovGenerator
@@ -80,6 +93,31 @@ class MarkovGenerator
             console.log(context);
             console.log(words);
         }
+    while (words[words.length-1] != '.' && words[words.length-1] != '!' && words[words.length-1] != '?')
+        {
+            const context = words.slice(-this.context).join(' ');
+            const possibilities = this.chain[context];
+            if (!possibilities || possibilities.length === 0)
+            {
+                words.push(startingDict[Math.floor(Math.random() * startingDict.length)]);
+                console.log(possibilities);
+                console.log(context);
+                console.log(words);
+                continue;
+            }
+            words.push(possibilities[Math.floor(Math.random() * possibilities.length)]);
+            console.log(possibilities);
+            console.log(context);
+            console.log(words);
+        }
+        for (let i = 0; i < words.length; i++)
+        {
+            if (words[i] == '.' || words[i] == ',' || words[i] == '!' || words[i] == '?')
+            {
+                words[i-1] += words[i];
+                words.splice(i, 1);
+            }
+        }
         return words;
     }
 }
@@ -103,7 +141,7 @@ function reading()
     text[startingWords-words] = `<span style = "color: #b9b285ff;">${text[startingWords-words]}</span>`;
     words -= 1;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
-    bukeWords.innerHTML = `${text.join(' ').replace(/\s+([.,!?'])/g, "$1")}`;
+    bukeWords.innerHTML = `${text.join(' ')}`;
     if (words < 1) {knowledge++; knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; bukeImg.removeEventListener('click', reading); newBuke()}
 }
 
@@ -118,7 +156,7 @@ function newBuke()
 
     knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
-    bukeWords.innerHTML = `${text.join(' ').replace(/\s+([.,!?'])/g, "$1")}`;
+    bukeWords.innerHTML = `${text.join(' ')}`;
 
     bukeImg.addEventListener('click', reading);
 }

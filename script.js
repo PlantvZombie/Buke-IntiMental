@@ -7,22 +7,20 @@ const bukeImg = document.getElementById('bukeImg');
 
 const logerBuke = document.getElementById('longer');
 
-let knowledge = 0, mental = 1, words = 0, maxWords = 0, startingWords = 0;
+let knowledge = 0, mental = 0, words = 0, maxWords = 0, startingWords = 0;
 let maxWordIncreaser = 0, logerCost = 1;
 let text = [];
 
-let startingDict = ['Once', 'There', 'The', 'A', 'I','My', 'Everybody', 'They', 'And', 'He', 'Periods', 'Little', 'Dear', 'One', 'Sonion', 'Who', 'Man', 'It', ];
-
 const brainTrainRaw = [
-    'Once upon a time there was a big tower.',
+    'Once upon a time, there was a big tower.',
     'Everybody loved the big tower.',
-    'They did happy dances and fun parties around the tower.',
+    'They did happy dances and had fun parties around the tower.',
     'And then they went to bed and had nice cool dreams!',
     'There was once a big bad guy.',
     'He tried to hurt the king but he used his great strength to win.',
     'The king is super strong.',
     'The long train went around town.',
-    'A guy with a lady makes a couple.',
+    'A guy with a lady can be a couple.',
     'My mommy and daddy pay for my lunch.',
     'Periods go anywhere I want them to.',
     'Little red riding hood is my favorite book.',
@@ -49,7 +47,18 @@ const brainTrainRaw = [
     'The orange juice is yummy.',
     'Dear mommy and daddy, I love you.',
     'They asked if I was seven, but I said I am four! I am very smart.',
+    'Their last hope is dead.',
 ];
+
+const startingDict = ['Once', 'There', 'The', 'A', 'I','My', 'Everybody', 'They', 'And', 'He', 'Periods', 'Little', 'Dear', 'One', 'Sonion', 'Who', 'Man', 'It', 'Their'];
+
+//let startingDict2 = []; this can come back at a later date
+
+//for (let i = 0; i < brainTrainRaw.length; i++)
+//{
+   // startingDict2.push(brainTrainRaw[i].split(/\s+|([^\w\s'’-])/).filter(Boolean).slice(0, 2).join(' '));
+   // console.log(startingDict2);
+//}
 
 class MarkovGenerator
 {
@@ -129,9 +138,9 @@ thinker.train(brainTrainRaw);
 logerBuke.addEventListener('click', () => {
     if (!(knowledge < logerCost))
     {
-        knowledge -= logerCost;
+        knowledge = parseFloat((knowledge - logerCost).toFixed(3));
         maxWordIncreaser += 50;
-        logerCost = Math.round(logerCost * 1.5);
+        logerCost = parseFloat((logerCost * 1.5).toFixed(3));
         logerBuke.innerHTML = `${logerCost} Knowledge!`;
         knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`;
     }
@@ -143,7 +152,7 @@ function reading()
     words -= 1;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
     bukeWords.innerHTML = `${text.join(' ')}`;
-    if (words < 1) {knowledge = parseFloat((knowledge + ((startingWords/100) * mental)).toFixed(3)); knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; mental = parseFloat((mental + 0.1).toFixed(1)); mentalLabel.innerHTML = `Mental: ${mental}`; mentalLabel.title = `Your knowledge gain is being multiplied by ${mental}`; bukeImg.removeEventListener('click', reading); newBuke()}
+    if (words < 1) {knowledge = parseFloat((knowledge + ((startingWords/100) * (1 + (mental/10)))).toFixed(3)); knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; mental += 1; mentalLabel.innerHTML = `${mental} IQ`; mentalLabel.title = `Your knowledge gain is being multiplied by ${1+mental/10}`; bukeImg.removeEventListener('click', reading); newBuke()}
 }
 
 function newBuke()

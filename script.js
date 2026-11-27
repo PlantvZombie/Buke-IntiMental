@@ -1,4 +1,5 @@
 const knowledgeLabel = document.getElementById('knowledgeLabel');
+const mentalLabel = document.getElementById('mentalCounter');
 const wordsLabel = document.getElementById('wordsLabel');
 const bukeWords = document.getElementById('wordText');
 
@@ -6,7 +7,7 @@ const bukeImg = document.getElementById('bukeImg');
 
 const logerBuke = document.getElementById('longer');
 
-let knowledge = 0, words = 0, maxWords = 0, startingWords = 0;
+let knowledge = 0, mental = 1, words = 0, maxWords = 0, startingWords = 0;
 let maxWordIncreaser = 0, logerCost = 1;
 let text = [];
 
@@ -142,7 +143,7 @@ function reading()
     words -= 1;
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
     bukeWords.innerHTML = `${text.join(' ')}`;
-    if (words < 1) {knowledge++; knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; bukeImg.removeEventListener('click', reading); newBuke()}
+    if (words < 1) {knowledge = parseFloat((knowledge + ((startingWords/100) * mental)).toFixed(3)); knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; mental = parseFloat((mental + 0.1).toFixed(1)); mentalLabel.innerHTML = `Mental: ${mental}`; mentalLabel.title = `Your knowledge gain is being multiplied by ${mental}`; bukeImg.removeEventListener('click', reading); newBuke()}
 }
 
 function newBuke()

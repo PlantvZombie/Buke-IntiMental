@@ -4,11 +4,14 @@ const wordsLabel = document.getElementById('wordsLabel');
 const bukeWords = document.getElementById('wordText');
 
 const bukeImg = document.getElementById('bukeImg');
+const skimmingButton = document.getElementById('skimming'); // the whole button + text
 
 const logerBuke = document.getElementById('longer');
+const skimming = document.getElementById('skimmer'); // just the button
 
 let knowledge = 0, mental = 0, words = 0, maxWords = 0, startingWords = 0;
 let maxWordIncreaser = 0, logerCost = 1;
+let wordsRead = 1;
 let text = [];
 
 const brainTrainRaw = [
@@ -146,17 +149,37 @@ logerBuke.addEventListener('click', () => {
     }
 })
 
+skimmingButton.addEventListener('10iq', () => {
+    skimmingButton.style.visibility = 'visible';
+    skimming.addEventListener('click', () => {
+        if (!(knowledge < 15))
+        {
+            wordsRead++;
+            knowledge = parseFloat((knowledge - 15).toFixed(3));
+            knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`;
+            skimmingButton.remove();
+        }
+    })
+})
+
 function reading() 
 {
-    text[startingWords-words] = `<span style = "color: #b9b285ff;">${text[startingWords-words]}</span>`;
-    words -= 1;
+    for (i = 0; i < wordsRead; i++)
+    {
+        text[startingWords-words] = `<span style = "color: #b9b285ff;">${text[startingWords-words]}</span>`;
+        words -= 1;
+    }
     wordsLabel.innerHTML = `There are ${words} words left in this Buke.`;
     bukeWords.innerHTML = `${text.join(' ')}`;
-    if (words < 1) {knowledge = parseFloat((knowledge + ((startingWords/100) * (1 + (mental/10)))).toFixed(3)); knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; mental += 1; mentalLabel.innerHTML = `${mental} IQ`; mentalLabel.title = `Your knowledge gain is being multiplied by ${1+mental/10}`; bukeImg.removeEventListener('click', reading); newBuke()}
+    if (words < 1) {knowledge = parseFloat((knowledge + ((startingWords/100) * (1 + (mental/10)))).toFixed(3)); knowledgeLabel.innerHTML = `You have ${knowledge} knowledge!`; mental += 1; mentalLabel.innerHTML = `${mental} IQ`; mentalLabel.title = `Your knowledge gain is being multiplied by ${1+mental/10}`; bukeImg.removeEventListener('click', reading); newBuke();}
 }
 
 function newBuke()
 {
+    if (mental == 10) 
+    {
+        skimmingButton.dispatchEvent(new Event('10iq'));
+    }
     maxWords = 100 + maxWordIncreaser;
     words = Math.round(Math.random() * maxWords) + 1;
     
